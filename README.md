@@ -9,7 +9,7 @@ PackageService is built with scalability in mind, requests to the currency and p
 | GET    | /package                  | List all packages.                       | `{"name": "My Test Package.", "description": "My great package", "products": ["VqKb4tyj9V6i"]}` |
 | POST   | /package                  | Create a new package                     |                                          |
 | GET    | /package/:id?currency=GBP | Get a package with an optional currency. |                                          |
-| PUT    | /package/:id              | Update a package. All parameters are optional for this API call. **Note: if you pass `products` the original products that were in this package will be REPLACED with the new products passed, even if your new `products` is empty.** | `{"name": "My Test Package.", "description": "My great package", "products": ["VqKb4tyj9V6i"]}` |
+| PUT    | /package/:id              | Update a package. All parameters are optional for this API call. Note: if you pass `products` the original products that were in this package will be replaced with the new products passed. | `{"name": "My Test Package.", "description": "My great package", "products": ["VqKb4tyj9V6i"]}` |
 | DELETE | /package/:id              | Delete a package.                        |                                          |
 
 There is currently no persistent storage, `PackageRepository` should be refactored to use DynamoDB and then the current functionality of the class can be repurposed as a cache in front of DynamoDB. There are also no unit or e2e tests written.
