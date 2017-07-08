@@ -1,5 +1,7 @@
 package uk.jordandoyle.packageservice.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -26,6 +28,7 @@ public class Package {
     /**
      * List of products in this package.
      */
+    @JsonIgnore
     private Set<Product> products = new HashSet<>();
 
     public Package() {
