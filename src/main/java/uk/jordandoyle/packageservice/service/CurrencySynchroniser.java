@@ -33,7 +33,7 @@ public class CurrencySynchroniser {
     /**
      * Class logger
      */
-    private final Logger LOGGER = LoggerFactory.getLogger(CurrencySynchroniser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CurrencySynchroniser.class);
 
     /**
      * Downstream endpoint we need to hit for product data
@@ -56,7 +56,7 @@ public class CurrencySynchroniser {
     @PostConstruct // run this method on startup
     @Async
     public void synchroniser() throws IOException {
-        this.LOGGER.info("Grabbing latest exchanges rates from downstream");
+        LOGGER.info("Grabbing latest exchanges rates from downstream");
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         // build our http request
@@ -75,6 +75,6 @@ public class CurrencySynchroniser {
         this.exchangeRateRepository.setCurrentExchangeRate(exchangeRate);
 
         stopwatch.stop();
-        this.LOGGER.info("Grabbed and parsed exchange rates in {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOGGER.info("Grabbed and parsed exchange rates in {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 }

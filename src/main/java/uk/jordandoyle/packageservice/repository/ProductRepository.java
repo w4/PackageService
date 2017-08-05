@@ -1,13 +1,15 @@
 package uk.jordandoyle.packageservice.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import uk.jordandoyle.packageservice.domain.Product;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Data store/container class to store all our known products from our downstream service.
@@ -15,9 +17,14 @@ import java.util.Set;
 @Repository
 public final class ProductRepository {
     /**
+     * Class logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductRepository.class);
+
+    /**
      * All the products we know about
      */
-    private final Map<String, Product> PRODUCTS = new HashMap<>();
+    private final Map<String, Product> products = new ConcurrentHashMap<>();
 
     /**
      * Adds or updates our product store with this product.
@@ -25,10 +32,10 @@ public final class ProductRepository {
      * @param newProduct product to add/update
      */
     public void addProduct(Product newProduct) {
-        if (this.PRODUCTS.containsKey(newProduct.getId())) {
+        if (this.products.containsKey(newProduct.getId())) {
             // we don't want to replace our Product instance if the product changes because then our Packages will
             // hold a reference to a different object.
-            Product productRef = this.PRODUCTS.get(newProduct.getId());
+            Product productRef = this.products.get(newProduct.getId());
 
             // try to copy over fields from our new product to our old.
             for (Field field : Product.class.getDeclaredFields()) {
@@ -37,12 +44,12 @@ public final class ProductRepository {
                 try {
                     field.set(productRef, field.get(newProduct));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Failed to update field for product.", e);
                 }
             }
         } else {
             // we don't already know about this project so just add it normally
-            this.PRODUCTS.put(newProduct.getId(), newProduct);
+            this.products.put(newProduct.getId(), newProduct);
         }
     }
 
@@ -62,8 +69,8 @@ public final class ProductRepository {
      *
      * @return a list of products
      */
-    public Set<Product> getProducts() {
-        return new HashSet<>(this.PRODUCTS.values());
+    public Collection<Product> getProducts() {
+        return Collections.unmodifiableCollection(this.products.values());
     }
 
     /**
@@ -73,6 +80,6 @@ public final class ProductRepository {
      * @return product requested or {@code null} if it couldn't be found
      */
     public Product getProductById(String id) {
-        return this.PRODUCTS.get(id);
+        return this.products.get(id);
     }
 }

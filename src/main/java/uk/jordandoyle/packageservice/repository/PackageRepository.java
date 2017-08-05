@@ -3,11 +3,11 @@ package uk.jordandoyle.packageservice.repository;
 import org.springframework.stereotype.Repository;
 import uk.jordandoyle.packageservice.domain.Package;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Datastore for packages. This is currently only backed by a HashMap and no persistent datastore.
@@ -19,7 +19,7 @@ public class PackageRepository {
     /**
      * All the packages we own
      */
-    private final Map<UUID, Package> PACKAGES = new HashMap<>();
+    private final Map<UUID, Package> packages = new ConcurrentHashMap<>();
 
     /**
      * Adds a new package to our datastore.
@@ -27,7 +27,7 @@ public class PackageRepository {
      * @param p package to add
      */
     public void addPackage(Package p) {
-        this.PACKAGES.put(p.getUuid(), p);
+        this.packages.put(p.getUuid(), p);
     }
 
     /**
@@ -37,7 +37,7 @@ public class PackageRepository {
      * @return true, if we have the given package
      */
     public boolean hasPackage(UUID uuid) {
-        return this.PACKAGES.containsKey(uuid);
+        return this.packages.containsKey(uuid);
     }
 
     /**
@@ -46,7 +46,7 @@ public class PackageRepository {
      * @param uuid uuid of the package to remove
      */
     public void deletePackage(UUID uuid) {
-        this.PACKAGES.remove(uuid);
+        this.packages.remove(uuid);
     }
 
     /**
@@ -55,13 +55,14 @@ public class PackageRepository {
      * @param uuid uuid of the package to get
      */
     public Package getPackage(UUID uuid) {
-        return this.PACKAGES.get(uuid);
+        return this.packages.get(uuid);
     }
 
     /**
-     * Get all packages from our datastore
+     * Get all packages from our datastore. This method returns an unmodifiable collection. Use the other method
+     * provided by this class to interact with the collection.
      */
-    public Set<Package> getPackages() {
-        return new HashSet<>(this.PACKAGES.values());
+    public Collection<Package> getPackages() {
+        return Collections.unmodifiableCollection(this.packages.values());
     }
 }

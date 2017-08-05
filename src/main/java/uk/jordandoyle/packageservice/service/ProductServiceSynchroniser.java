@@ -30,12 +30,12 @@ public class ProductServiceSynchroniser {
     /**
      * Class logger
      */
-    private final Logger LOGGER = LoggerFactory.getLogger(ProductServiceSynchroniser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceSynchroniser.class);
 
     /**
      * Downstream endpoint we need to hit for product data
      */
-    private final GenericUrl PRODUCT_ENDPOINT = new GenericUrl("https://product-service.herokuapp" +
+    private static final GenericUrl PRODUCT_ENDPOINT = new GenericUrl("https://product-service.herokuapp" +
             ".com/api/v1/products");
 
     /**
@@ -53,11 +53,11 @@ public class ProductServiceSynchroniser {
     @Scheduled(fixedDelay = 10000)
     @Async
     public void synchronise() throws IOException {
-        this.LOGGER.info("Grabbing latest product list from downstream Product Service");
+        LOGGER.info("Grabbing latest product list from downstream Product Service");
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         // build our http request
-        HttpRequest request = this.requestFactory.buildGetRequest(this.PRODUCT_ENDPOINT);
+        HttpRequest request = this.requestFactory.buildGetRequest(PRODUCT_ENDPOINT);
 
         // don't spam the downstream service with requests if we can't hit it
         request.setUnsuccessfulResponseHandler(new HttpBackOffUnsuccessfulResponseHandler(new ExponentialBackOff()));
@@ -74,6 +74,6 @@ public class ProductServiceSynchroniser {
         this.productRepository.addProducts(result);
 
         stopwatch.stop();
-        this.LOGGER.info("Grabbed and parsed all products in {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOGGER.info("Grabbed and parsed all products in {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 }
