@@ -100,9 +100,14 @@ public class PackageController {
                                                                       String currency) {
         currency = currency.toUpperCase();
 
-        if (!currency.equals("USD") && !this.exchangeRateRepository.getRates().containsKey(currency)) {
-            // we don't know about this currency so throw a 400
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (!currency.equals("USD")) {
+            if (this.exchangeRateRepository.getRates() == null) {
+                // return a 503 if our exchange rate repository hasn't been instantiated yet.
+                return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+            } else if (!this.exchangeRateRepository.getRates().containsKey(currency)) {
+                // we don't know about this currency so throw a 400
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         }
 
         // multiplier defaults to 1 for USD
