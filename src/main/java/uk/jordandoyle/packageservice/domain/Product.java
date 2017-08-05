@@ -33,4 +33,17 @@ public final class Product {
     public int getPrice() {
         return this.price;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Product && ((Product) obj).getId().equals(this.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.id.hashCode();
+        result = 31 * result + this.name.hashCode();
+        result = 31 * result + Integer.hashCode(this.price);
+        return result;
+    }
 }

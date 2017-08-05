@@ -58,4 +58,18 @@ public class Package {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Package && ((Package) obj).getUuid().equals(this.getUuid());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.uuid.hashCode();
+        result = 31 * result + this.name.hashCode();
+        result = 31 * result + this.description.hashCode();
+        result = 31 * result + this.products.hashCode();
+        return result;
+    }
 }
