@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -122,13 +123,13 @@ public class PackageController {
         BigDecimal price = total.multiply(multiplier);
 
         // convert our package to a hash map so we can easily add arbitrary key, value pairs
-        HashMap<String, Object> res = new HashMap<String, Object>(BeanMap.create(p));
+        Map<String, Object> res = new HashMap<String, Object>(BeanMap.create(p));
 
         // update price to the converted price & add currency we've converted to
         res.put("price", price.setScale(2, BigDecimal.ROUND_HALF_UP));
         res.put("currency", currency.toUpperCase());
 
-        HashSet<HashMap> products = new HashSet<>();
+        Set<HashMap> products = new HashSet<>();
 
         for (Product product : p.getProducts()) {
             // convert each product to a hash map
